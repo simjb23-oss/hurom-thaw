@@ -54,7 +54,7 @@ const M = {
   case: new THREE.MeshPhysicalMaterial({ color: 0xf4f4f1, roughness: 0.42, clearcoat: 0.35, clearcoatRoughness: 0.35, transparent: true, opacity: 1 }),
   panel: new THREE.MeshPhysicalMaterial({ color: 0x0b0c0e, roughness: 0.06, clearcoat: 1, clearcoatRoughness: 0.04, envMapIntensity: 1.4, transparent: true, opacity: 1 }),
   smoke: new THREE.MeshPhysicalMaterial({ color: 0x3a3f46, roughness: 0.05, transparent: true, opacity: 0.36, envMapIntensity: 1.0, depthWrite: false, side: THREE.DoubleSide }),
-  lidGlass: new THREE.MeshPhysicalMaterial({ color: 0x1a1d21, roughness: 0.12, transparent: true, opacity: 0.78, envMapIntensity: 1.0, depthWrite: false }),
+  lidGlass: new THREE.MeshPhysicalMaterial({ color: 0x2b2f35, roughness: 0.46, transparent: true, opacity: 0.9, envMapIntensity: 0.25, clearcoat: 0, depthWrite: false }),   // 뚜껑: 스모크 PC(플라스틱) — 유리처럼 비치지 않게 무광
   touch: new THREE.MeshBasicMaterial({ map: touchTex, transparent: true, depthWrite: false }),
   logo: new THREE.MeshBasicMaterial({ map: logoTex, transparent: true, depthWrite: false }),
   steel: new THREE.MeshStandardMaterial({ color: 0xb4b8bc, metalness: 0.55, roughness: 0.6 }),   // 트레이: 무광 회색 알루미늄(아노다이징)
@@ -208,7 +208,7 @@ const tray = new THREE.Group();
   g.position.set(0, BASE - PT / 2, ZC);
   part('냉각판 · 알루미늄 1cm · 사행 물길 내장', g, [0, 0.55, 0], new THREE.Vector3(-1.05, 0, 0.55));
 }
-/* 9. 냉각판 속 물 — 밀봉 0.3L. 사용자가 붓거나 버리지 않는다 */
+/* 9. 냉각판 속 물 — 밀봉 0.5L. 사용자가 붓거나 버리지 않는다 */
 const CH = 5, SP = (PD - 0.44) / (CH - 1);
 {
   const g = new THREE.Group();
@@ -216,7 +216,7 @@ const CH = 5, SP = (PD - 0.44) / (CH - 1);
   [[-1, 0], [1, 1], [-1, 2], [1, 3]].forEach(([sx, i]) => { const j = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.05, SP), M.water); j.position.set(sx * (PW / 2 - 0.22), 0, -PD / 2 + 0.22 + i * SP + SP / 2); g.add(j); });
   g.name = 'water';
   g.position.set(0, BASE - PT / 2, ZC);
-  part('냉각판 속 물 · 15°C 로 돈다 · 밀봉 0.3L', g, [0, 0.55, 0], new THREE.Vector3(1.05, 0.05, 0.3), true);
+  part('냉각판 속 물 · 15°C 로 돈다 · 밀봉 0.5L', g, [0, 0.55, 0], new THREE.Vector3(1.05, 0.05, 0.3), true);
 }
 /* 10. 펠티어 40mm 2장 + 구리 블록 — 뒤 칸에 세움(전선 보관함 칸막이 위). 찬 면은 블록(물)과 안쪽 냉각 핀으로, 더운 면은 방열판으로 */
 const SY = BASE + CAB + 0.3;   // 뒤 칸 부품 줄 중심 높이
@@ -293,7 +293,7 @@ function fan(size = 0.5) {
   g.position.set(0, BASE, MZ);
   part('전선 보관함 1.5cm · DC 선 1.2m 감아 넣음 · 칸막이', g, [0, -0.45, -1.3], new THREE.Vector3(-0.9, 0.07, 0), true);
 }
-/* 16b. 온도 센서 3 — NTC ① 냉각판 · NTC ② 순환 바람 입구(아래 망 안) · NTC ③ 방열판(과열 차단). 적외선(고기 겉면)은 벤치 실험 뒤 검토 */
+/* 16b. 온도 센서 3 — NTC ① 냉각판 · NTC ② 순환 바람 입구(아래 망 안) · NTC ③ 방열판(과열 차단). 적외선(고기 겉면)은 넣지 않음(준보 확정) */
 {
   const g = new THREE.Group();
   const mk = (x, y, z, ir = false) => { const m = new THREE.Mesh(ir ? new THREE.CylinderGeometry(0.035, 0.035, 0.05, 16) : new THREE.BoxGeometry(0.06, 0.04, 0.04), ir ? M.dark : M.chip); if (ir) m.rotation.x = Math.PI / 2; m.position.set(x, y, z); g.add(m); const w = new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3([new THREE.Vector3(x, y, z), new THREE.Vector3(x * 0.8, y + 0.15, MZ - 0.05), new THREE.Vector3(x * 0.5, H - 0.06, MZ)]), 12, 0.006, 5), M.wireB); g.add(w); };
@@ -328,7 +328,7 @@ function fan(size = 0.5) {
   part('12V 외장 어댑터 · 기성품(60W) · 선은 옆 홈으로', g, [1.2, -0.7, -0.7], new THREE.Vector3(1.6, 0.28, -1.9));
 }
 /* 물살 — 구리 블록 → 냉각판 사행 물길 → 펌프 → 블록 */
-const flowG = new THREE.Group(); product.add(flowG);
+const flowG = new THREE.Group(); flowG.name = 'flowg'; product.add(flowG);
 {
   const y = BASE - PT / 2, X = PW / 2 - 0.22;
   const pts = [new THREE.Vector3(-0.45, SY - 0.1, MZ + 0.18), new THREE.Vector3(-0.45, y + 0.03, MZ + 0.42)];
@@ -340,7 +340,7 @@ const flowG = new THREE.Group(); product.add(flowG);
   for (let i = 0; i < 18; i++) { const d = new THREE.Mesh(new THREE.SphereGeometry(0.03, 12, 12), M.flow); d.userData.t = i / 18; flowG.add(d); }
 }
 /* 공기 흐름 — 뒤 위 망(냉각 핀)에서 나와 뚜껑 아래로 앞까지, 내려와 트레이 옆을 지나 뒤 아래 망으로 */
-const airG = new THREE.Group(); product.add(airG);
+const airG = new THREE.Group(); airG.name = 'airg'; product.add(airG);
 {
   const zb = MZ + MR / 2, yTop = BASE + GL - 0.1, yLow = BASE + CAB + 0.08;
   [[-1], [1]].forEach(([sx]) => {
@@ -365,6 +365,8 @@ product.position.y = -H / 2;
 const Q = new URLSearchParams(location.search);
 product.traverse(o => { if (o.name && Q.has('no' + o.name)) o.visible = false; });   // 디버그: ?nowater ?nomeat ?noadapter
 const CY = +(Q.get('cy') || 0);
+const ANG = Q.has('ang') ? +Q.get('ang') * Math.PI / 180 : null;   // 카메라 각도 고정(도) — 최종 이미지용
+const NOAIR = Q.has('noair');                                       // 바람 표시 숨김 — 최종 이미지용
 const forced = Q.get('p');
 const ease = t => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
 const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
@@ -391,7 +393,7 @@ function frame(now) {
   M.case.opacity = 1 - 0.86 * ghost; M.case.depthWrite = ghost < 0.01;
   M.panel.opacity = 1 - 0.86 * ghost; M.panel.depthWrite = ghost < 0.01;
   M.smoke.opacity = 0.36 - 0.26 * ghost;
-  M.lidGlass.opacity = 0.8 - 0.62 * ghost;
+  M.lidGlass.opacity = 0.9 - 0.72 * ghost;
   M.touch.opacity = 1 - 0.7 * ghost; M.logo.opacity = 1 - 0.7 * ghost;
   const jg = ghost * (1 - e);
   M.alu.opacity = 1 - 0.72 * jg; M.alu.depthWrite = jg < 0.01;
@@ -407,13 +409,14 @@ function frame(now) {
   ground.material.opacity = 0.1 * (1 - e);
   const dist = 7.6 + e * 8.8;
   const camY = p < 0.26 ? 2.4 : p < 0.4 ? 2.4 + 1.8 * ease((p - 0.26) / 0.14) : 4.2;
-  camera.position.set(Math.sin(ang) * dist, camY + CY + e * 2.4, Math.cos(ang) * dist);
+  const angF = ANG === null ? ang : ANG;
+  camera.position.set(Math.sin(angF) * dist, camY + CY + e * 2.4, Math.cos(angF) * dist);
   camera.lookAt(0, -0.1 + e * 1.2, 0);
   const fk = Q.get('focus');
   if (fk) { const pt = parts.find(q => q.el.textContent.includes(fk)); if (pt) { const c = new THREE.Box3().setFromObject(pt.obj).getCenter(new THREE.Vector3()); camera.position.set(c.x + 1.0, c.y + 1.2, c.z + 1.0); camera.lookAt(c); } }
 
   product.traverse(o => { if (o.userData.spin) o.rotation.z += dt * (3 + 10 * (1 - e)); });
-  const airOn = (p < 0.1 || p > 0.96) ? 0.35 : (ghost > 0.3 && e < 0.4) ? 0.8 * (1 - e / 0.4) : 0;
+  const airOn = NOAIR ? 0 : (p < 0.1 || p > 0.96) ? 0.35 : (ghost > 0.3 && e < 0.4) ? 0.8 * (1 - e / 0.4) : 0;
   M.air.opacity += (airOn - M.air.opacity) * 0.1;
   airG.children.forEach(ch => { if (ch.userData.c) { ch.userData.t = (ch.userData.t + dt * 0.12) % 1; ch.position.copy(ch.userData.c.getPointAt(ch.userData.t)); } });
 
