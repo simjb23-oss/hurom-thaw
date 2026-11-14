@@ -177,7 +177,7 @@ window.xvSetColor = setColor;
   g.add(extrudeUp(rrect(W - 0.02, FD - 0.02, R, new THREE.Shape(), 0, -FZ), 0.05, M.lidGlass, 0, 0.01));
   [-0.6, 0.6].forEach(x => { const c = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.06, 0.08), M.dark); c.position.set(x, 0.04, -FD / 2 + 0.06); g.add(c); });
   g.position.set(0, BASE + GL + RIM, 0);
-  part('뚜껑 · 스모크 PC 3mm · 하드코팅 · 아무것도 없음 · 떼어 씻음', g, [0, 3.7, 0], new THREE.Vector3(1.0, 0.05, 1.0));
+  part('뚜껑 · 스모크 PC 3mm · 하드코팅 · 안쪽 김 서림 방지 · 아무것도 없음 · 떼어 씻음', g, [0, 3.7, 0], new THREE.Vector3(1.0, 0.05, 1.0));
 }
 /* 6. 트레이 — 알루미늄 2mm + 경질 아노다이징(식품 등급), 원물을 그대로 올림. 가장자리 핏물 홈, 들어서 빼고 손 세척 */
 const tray = new THREE.Group();
@@ -190,7 +190,7 @@ const tray = new THREE.Group();
   const rimS = rrect(w + 0.1, d + 0.1, 0.08); rimS.holes.push(rrect(w - 0.01, d - 0.01, 0.04));
   const rimM = new THREE.Mesh(new THREE.ExtrudeGeometry(rimS, { depth: 0.02, bevelEnabled: false, curveSegments: 24 }), M.steel); rimM.rotation.x = -Math.PI / 2; rimM.position.y = TDEEP; tray.add(rimM);
   tray.position.set(0, BASE, ZC);
-  part('트레이 · 알루미늄 2mm 아노다이징 · 20×16 · 핏물 홈', tray, [0, 1.1, 0], new THREE.Vector3(-1.0, 0.2, 0.8));
+  part('트레이 · 식품용 알루미늄 3003 2mm 경질 아노다이징 · 핏물 홈', tray, [0, 1.1, 0], new THREE.Vector3(-1.0, 0.2, 0.8));
 }
 /* 7. 원물 고기 — 지퍼백 없이 트레이에 그대로. 두께 4cm 까지 */
 {
@@ -206,25 +206,14 @@ const tray = new THREE.Group();
   const g = new THREE.Group();
   g.add(new THREE.Mesh(new RoundedBoxGeometry(PW, PT, PD, 2, 0.02), M.alu));
   g.position.set(0, BASE - PT / 2, ZC);
-  part('냉각판 · 알루미늄 1cm · 사행 물길 내장', g, [0, 0.55, 0], new THREE.Vector3(-1.05, 0, 0.55));
+  part('냉각판 · 식품용 알루미늄 1050 · 경질 아노다이징 · 물 0.5L 밀봉(돌지 않음)', g, [0, 0.55, 0], new THREE.Vector3(-1.05, 0, 0.55));
 }
-/* 9. 냉각판 속 물 — 밀봉 0.5L. 사용자가 붓거나 버리지 않는다 */
-const CH = 5, SP = (PD - 0.44) / (CH - 1);
-{
-  const g = new THREE.Group();
-  for (let i = 0; i < CH; i++) { const ch = new THREE.Mesh(new THREE.BoxGeometry(PW - 0.3, 0.05, 0.14), M.water); ch.position.set(0, 0, -PD / 2 + 0.22 + i * SP); g.add(ch); }
-  [[-1, 0], [1, 1], [-1, 2], [1, 3]].forEach(([sx, i]) => { const j = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.05, SP), M.water); j.position.set(sx * (PW / 2 - 0.22), 0, -PD / 2 + 0.22 + i * SP + SP / 2); g.add(j); });
-  g.name = 'water';
-  g.position.set(0, BASE - PT / 2, ZC);
-  part('냉각판 속 물 · 15°C 로 돈다 · 밀봉 0.5L', g, [0, 0.55, 0], new THREE.Vector3(1.05, 0.05, 0.3), true);
-}
-/* 10. 펠티어 40mm 2장 + 구리 블록 — 뒤 칸에 세움(전선 보관함 칸막이 위). 찬 면은 블록(물)과 안쪽 냉각 핀으로, 더운 면은 방열판으로 */
+/* 10. 펠티어 40mm 2장 + 구리 블록 — 뒤 칸에 세움(전선 보관함 칸막이 위). 찬 면은 블록을 거쳐 냉각판(물 밀봉, 돌지 않음)과 안쪽 냉각 핀으로, 더운 면은 방열판으로 */
 const SY = BASE + CAB + 0.3;   // 뒤 칸 부품 줄 중심 높이
 {
   const g = new THREE.Group();
   const block = new THREE.Mesh(new THREE.BoxGeometry(1.1, 0.46, 0.05), M.copper); g.add(block);
   [-0.3, 0.3].forEach(x => { const c = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.4, 0.04), M.ceramic); c.position.set(x, 0, -0.045); g.add(c); });
-  [[-0.45], [0.45]].forEach(([x]) => { const t = new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3([new THREE.Vector3(x, -0.23, 0.03), new THREE.Vector3(x, -0.36, 0.14), new THREE.Vector3(x, -0.44, 0.3)]), 10, 0.02, 8), M.tube); g.add(t); });
   g.position.set(0, SY, MZ + 0.15);
   part('펠티어 40mm 2장(세움) + 구리 블록 · 가열 ↔ 냉각', g, [0, 0.9, -1.1], new THREE.Vector3(0.6, 0.05, 0.1), true);
 }
@@ -251,15 +240,6 @@ function fan(size = 0.5) {
   const g = fan(0.45);
   g.position.set(0, SY, MZ - 0.13);
   part('블로어 팬 40×40×10mm · 뒷면 슬롯으로 배기', g, [0, -0.2, -2.3], new THREE.Vector3(0.3, 0, 0), true);
-}
-/* 13. 소형 펌프 — 뒤 칸 왼쪽, 칸막이 위. 밀봉 회로라 물에 닿는 전기부 없음 */
-{
-  const g = new THREE.Group();
-  const body = new THREE.Mesh(new THREE.CylinderGeometry(0.09, 0.09, 0.16, 24), M.dark); body.rotation.z = Math.PI / 2; g.add(body);
-  const coil = new THREE.Mesh(new THREE.TorusGeometry(0.07, 0.022, 10, 24), M.copper); coil.rotation.y = Math.PI / 2; coil.position.x = 0.05; g.add(coil);
-  const t1 = new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3([new THREE.Vector3(0.1, 0.0, 0.05), new THREE.Vector3(0.2, -0.06, 0.2), new THREE.Vector3(0.25, -0.12, 0.33)]), 10, 0.02, 8), M.tube); g.add(t1);
-  g.position.set(-0.95, BASE + CAB + 0.12, MZ + 0.08);
-  part('소형 펌프 · 냉각판 물을 돌림', g, [-1.2, -0.1, -1.5], new THREE.Vector3(0.0, -0.08, 0), true);
 }
 /* 14. 냉각 핀 + 순환 팬 30mm — 뒤 칸 안쪽 면, 망 뒤. 구리 블록에서 이어진 찬 핀을 지난 바람을 고기 위로 */
 {
@@ -327,18 +307,6 @@ function fan(size = 0.5) {
   g.name = 'adapter';
   part('12V 외장 어댑터 · 기성품(60W) · 선은 옆 홈으로', g, [1.2, -0.7, -0.7], new THREE.Vector3(1.6, 0.28, -1.9));
 }
-/* 물살 — 구리 블록 → 냉각판 사행 물길 → 펌프 → 블록 */
-const flowG = new THREE.Group(); flowG.name = 'flowg'; product.add(flowG);
-{
-  const y = BASE - PT / 2, X = PW / 2 - 0.22;
-  const pts = [new THREE.Vector3(-0.45, SY - 0.1, MZ + 0.18), new THREE.Vector3(-0.45, y + 0.03, MZ + 0.42)];
-  for (let i = 0; i < CH; i++) { const z = ZC - PD / 2 + 0.22 + i * SP; const sx = i % 2 === 0 ? -1 : 1; pts.push(new THREE.Vector3(sx * X, y, z), new THREE.Vector3(-sx * X, y, z)); }
-  pts.push(new THREE.Vector3(-0.95, y + 0.03, MZ + 0.42), new THREE.Vector3(-0.95, BASE + CAB + 0.12, MZ + 0.08), new THREE.Vector3(0.45, SY - 0.1, MZ + 0.18));
-  const c = new THREE.CatmullRomCurve3(pts, true, 'catmullrom', 0.1);
-  flowG.add(new THREE.Mesh(new THREE.TubeGeometry(c, 160, 0.012, 6, true), M.flow));
-  flowG.userData.curve = c;
-  for (let i = 0; i < 18; i++) { const d = new THREE.Mesh(new THREE.SphereGeometry(0.03, 12, 12), M.flow); d.userData.t = i / 18; flowG.add(d); }
-}
 /* 공기 흐름 — 뒤 위 망(냉각 핀)에서 나와 뚜껑 아래로 앞까지, 내려와 트레이 옆을 지나 뒤 아래 망으로 */
 const airG = new THREE.Group(); airG.name = 'airg'; product.add(airG);
 {
@@ -393,7 +361,7 @@ function frame(now) {
   M.case.opacity = 1 - 0.86 * ghost; M.case.depthWrite = ghost < 0.01;
   M.panel.opacity = 1 - 0.86 * ghost; M.panel.depthWrite = ghost < 0.01;
   M.smoke.opacity = 0.36 - 0.26 * ghost;
-  M.lidGlass.opacity = 0.9 - 0.72 * ghost;
+  M.lidGlass.opacity = 0.9 - 0.28 * ghost;   // 분해도에서도 스모크 색이 보이게
   M.touch.opacity = 1 - 0.7 * ghost; M.logo.opacity = 1 - 0.7 * ghost;
   const jg = ghost * (1 - e);
   M.alu.opacity = 1 - 0.72 * jg; M.alu.depthWrite = jg < 0.01;
@@ -419,11 +387,6 @@ function frame(now) {
   const airOn = NOAIR ? 0 : (p < 0.1 || p > 0.96) ? 0.35 : (ghost > 0.3 && e < 0.4) ? 0.8 * (1 - e / 0.4) : 0;
   M.air.opacity += (airOn - M.air.opacity) * 0.1;
   airG.children.forEach(ch => { if (ch.userData.c) { ch.userData.t = (ch.userData.t + dt * 0.12) % 1; ch.position.copy(ch.userData.c.getPointAt(ch.userData.t)); } });
-
-  const flowOn = (ghost > 0.3 && e < 0.4) ? 0.95 * (1 - e / 0.4) : 0;
-  M.flow.opacity += (flowOn - M.flow.opacity) * 0.1;
-  const c = flowG.userData.curve;
-  flowG.children.forEach(ch => { if (ch.userData.t !== undefined) { ch.userData.t = (ch.userData.t + dt * 0.06) % 1; ch.position.copy(c.getPointAt(ch.userData.t)); } });
 
   renderer.render(scene, camera);
 
