@@ -236,6 +236,7 @@ const btn = new THREE.Group();
   const g = new THREE.Group();
   const brick = new THREE.Mesh(new RoundedBoxGeometry(0.9, 0.3, 0.45, 2, 0.04), M.dark); brick.position.set(1.7, 0.15, -1.75); g.add(brick);
   const cable = new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3([new THREE.Vector3(1.3, 0.15, -1.75), new THREE.Vector3(0.2, 0.1, -1.9), new THREE.Vector3(-0.8, 0.2, -1.5), new THREE.Vector3(-1.0, 0.26, -D / 2 - 0.07)]), 30, 0.014, 6), M.wireB); g.add(cable);
+  g.name = 'adapter';
   part('12V 외장 어댑터 · 기성품', g, [0.9, 0, -0.9], new THREE.Vector3(1.7, 0.3, -1.75));
 }
 /* 물살 — 임펠러에서 나와 고기 아래·위를 한 바퀴 */
